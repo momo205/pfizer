@@ -11,13 +11,21 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import SignIn from './components/SignIn';
+import SignUp from './components/signUp';
 
 function App() {
   const [showSignIn, setShowSignIn] = React.useState(false);
+  const [showSignUp, setShowSignUp] = React.useState(false);
 
-  // Handler to toggle showing SignIn component
+  // Handlers to toggle showing SignIn or SignUp component
   const handleSignInClick = () => {
-    setShowSignIn(true); // Show the SignIn component when clicked
+    setShowSignIn(true);
+    setShowSignUp(false);
+  };
+
+  const handleSignUpClick = () => {
+    setShowSignUp(true);
+    setShowSignIn(false);
   };
 
   return (
@@ -32,20 +40,24 @@ function App() {
             <Typography variant="h5" color="inherit" sx={{ flexGrow: 1 }}>
               Maternal Health Monitor
             </Typography>
-            {/* Sign In and Login Buttons */}
-            <Button color="inherit" sx={{ mr: 2 }} onClick={handleSignInClick}>
+            {/* Sign In and Sign Up Buttons */}
+            <Button color="inherit" sx={{ mr: 2 }} onClick={handleSignUpClick}>
               Sign Up
             </Button>
-            <Button color="inherit">Login</Button>
+            <Button color="inherit" sx={{ mr: 2 }} onClick={handleSignInClick}>
+              Login
+            </Button>
           </Toolbar>
         </AppBar>
       </Box>
 
       {/* Main Content Section */}
       <Box sx={{ mt: 5 }}>
-        {/* Conditional Rendering for SignIn Component */}
+        {/* Conditional Rendering for SignIn or SignUp Component */}
         {showSignIn ? (
           <SignIn />
+        ) : showSignUp ? (
+          <SignUp />
         ) : (
           <>
             {/* Padded Image Section */}

@@ -10,6 +10,7 @@ import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import { styled } from '@mui/material/styles';
 
+// Shared Card styling
 const Card = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -91,7 +92,7 @@ export default function SignUp() {
         </Button>
         <Typography sx={{ textAlign: 'center', mt: 2 }}>
           Already have an account?{' '}
-          <Link href="#" variant="body2">
+          <Link href="/sign-in" variant="body2">
             Sign In
           </Link>
         </Typography>
