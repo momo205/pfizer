@@ -9,6 +9,9 @@ import Stack from '@mui/material/Stack';
 import Divider from '@mui/material/Divider';
 import Link from '@mui/material/Link';
 import { styled } from '@mui/material/styles';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../Firebase/config';
+import { useNavigate } from 'react-router-dom';
 
 // Shared Card styling
 const Card = styled(Box)(({ theme }) => ({
@@ -28,6 +31,7 @@ const Card = styled(Box)(({ theme }) => ({
 export default function SignUp() {
   const [emailError, setEmailError] = React.useState(false);
   const [passwordError, setPasswordError] = React.useState(false);
+  const navigate = useNavigate();
 
   const validateInputs = () => {
     const email = document.getElementById('email').value;
@@ -35,20 +39,37 @@ export default function SignUp() {
 
     if (!/\S+@\S+\.\S+/.test(email)) {
       setEmailError(true);
+      return false;
     } else {
       setEmailError(false);
     }
 
     if (password.length < 6) {
       setPasswordError(true);
+      return false;
     } else {
       setPasswordError(false);
     }
+
+    return true;
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    validateInputs();
+    if (validateInputs()) {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      try {
+        // Create new user in Firebase
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        console.log('User created:', userCredential.user);
+        
+        navigate('./pages/patient'); 
+      } catch (error) {
+        console.error('Error creating user:', error.message);
+        alert(error.message); 
+      }
+    }
   };
 
   return (

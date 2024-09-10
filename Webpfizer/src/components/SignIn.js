@@ -11,6 +11,9 @@ import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
 import { styled } from '@mui/material/styles';
 import { GoogleIcon, FacebookIcon } from './CustomIcons';
+import { auth } from '../Firebase/config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
 
 // Shared Card styling
 const Card = styled(Box)(({ theme }) => ({
@@ -28,13 +31,27 @@ const Card = styled(Box)(({ theme }) => ({
 }));
 
 export default function SignIn() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+
     console.log({
-      email: data.get('email'),
-      password: data.get('password'),
+      email,
+      password,
     });
+
+    try {
+      const user = await signInWithEmailAndPassword(auth, email, password);
+      console.log(user);
+      navigate('../pages/patient');
+    } catch (error) {
+      console.log(error.message);
+      alert(error.message);
+    }
   };
 
   return (
