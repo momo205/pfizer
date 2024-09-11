@@ -166,20 +166,24 @@ const Patient = () => {
                         <Typography variant="h6">{param.name}</Typography>
                         <Typography>{param.value}</Typography>
                         {/* Skip range check for "Baseline Fetal Heart Rate" */}
-                        {param.name !== "Baseline Fetal Heart Rate" && param.lowerBound > 0 && param.upperBound > 0 && (
-                          <Typography
-                            variant="body2"
-                            color={
-                              param.value >= param.lowerBound && param.value <= param.upperBound
-                                ? "green"
-                                : "red"
-                            }
-                          >
-                            {param.value >= param.lowerBound && param.value <= param.upperBound
-                              ? "Within Expected Range"
-                              : "Out of Expected Range"}
-                          </Typography>
-                        )}
+                        {param.name !== "Baseline Fetal Heart Rate" &&
+                          param.lowerBound > 0 &&
+                          param.upperBound > 0 && (
+                            <Typography
+                              variant="body2"
+                              color={
+                                param.value >= param.lowerBound &&
+                                param.value <= param.upperBound
+                                  ? "green"
+                                  : "red"
+                              }
+                            >
+                              {param.value >= param.lowerBound &&
+                              param.value <= param.upperBound
+                                ? "Within Expected Range"
+                                : "Out of Expected Range"}
+                            </Typography>
+                          )}
                       </Paper>
                     </Grid>
                   ))}
