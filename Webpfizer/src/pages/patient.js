@@ -135,7 +135,7 @@ const Patient = () => {
         </Toolbar>
       </AppBar>
 
-      <Typography variant="h4" sx={{ margin: "20px 0" }}>
+      <Typography variant="h4" sx={{ margin: "80px 0 20px 0" }}>
         Recorded Data
       </Typography>
 
