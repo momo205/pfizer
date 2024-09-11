@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -7,44 +7,116 @@ import {
   Container,
   Grid,
   Paper,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  TextField,
 } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import dayjs from "dayjs";
 
-import { data } from "../constants/patient-data";
+const Patient = () => {
+  const navigate = useNavigate();
+  const [filterDate, setFilterDate] = useState(""); // For date filtering
 
-const patient = () => {
-  // Sample data
-  const recordedData = {
-    fetalMovement: 10,
-    uterineContraction: 5,
-    baselineHeartRate: 140,
-    abnormalityPercentage: 15,
-    averageFetalValue: 120,
-    expectedData: {
-      fetalMovement: 12,
-      uterineContraction: 3,
-      baselineHeartRate: 130,
-      abnormalityPercentage: 5,
-      averageFetalValue: 130,
-    },
+  // Function to handle navigation to the home page
+  const handleGoToHomePage = () => {
+    navigate("/"); // Adjust the path to your home page
   };
 
-  const compareValues = (recorded, expected) => {
-    return {
-      fetalMovement: recorded.fetalMovement >= expected.fetalMovement,
-      uterineContraction:
-        recorded.uterineContraction <= expected.uterineContraction,
-      baselineHeartRate:
-        recorded.baselineHeartRate >= expected.baselineHeartRate,
-      abnormalityPercentage:
-        recorded.abnormalityPercentage <= expected.abnormalityPercentage,
-      averageFetalValue:
-        recorded.averageFetalValue >= expected.averageFetalValue,
-    };
+  // Function to handle log out and return to home
+  const handleLogout = () => {
+    // Add your log-out logic here
+    navigate("/");
   };
 
-  const comparisonResults = compareValues(
-    recordedData,
-    recordedData.expectedData
+  // Generate random data for 24 days
+  const generatePatientData = () => {
+    const data = [];
+    for (let i = 0; i < 24; i++) {
+      const date = dayjs().subtract(i, "day").format("MMMM D, YYYY");
+      data.push({
+        date,
+        prediction: `Prediction for ${date}`, // Placeholder prediction
+        parameters: [
+          {
+            name: "Baseline Fetal Heart Rate",
+            value: Math.floor(Math.random() * 51) + 110, // Random between 110 and 160
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Accelerations",
+            value: Math.random().toFixed(3), // Random decimal
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Fetal Movement",
+            value: Math.random().toFixed(2), // Random decimal
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Uterine Contractions",
+            value: Math.random().toFixed(3), // Random decimal
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Light Decelerations",
+            value: Math.random().toFixed(3), // Random decimal
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Severe Decelerations",
+            value: Math.random().toFixed(3), // Random decimal
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Prolonged Decelerations",
+            value: Math.random().toFixed(3), // Random decimal
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Abnormal Short Term Variability",
+            value: Math.floor(Math.random() * 101), // Random between 0 and 100
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Mean Value of Short Term Variability",
+            value: (Math.random() * 2).toFixed(1), // Random between 0 and 2
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Percentage of Time with Abnormal Long Term Variability",
+            value: Math.floor(Math.random() * 101), // Random between 0 and 100
+            lowerBound: 0,
+            upperBound: 0,
+          },
+          {
+            name: "Mean Value of Long Term Variability",
+            value: (Math.random() * 10).toFixed(1), // Random between 0 and 10
+            lowerBound: 0,
+            upperBound: 0,
+          },
+        ],
+      });
+    }
+    return data;
+  };
+
+  const patientData = generatePatientData();
+
+  // Handle date filtering
+  const filteredData = patientData.filter((dayData) =>
+    filterDate ? dayData.date.includes(filterDate) : true
   );
 
   return (
@@ -54,9 +126,12 @@ const patient = () => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             Patient Portal
           </Typography>
-          <Button color="inherit">Make Predictions</Button>
-          <Button color="inherit">Schedule Appointment</Button>
-          <Button color="inherit">Logout</Button>
+          <Button color="inherit" onClick={handleGoToHomePage}>
+            Home Page
+          </Button>
+          <Button color="inherit" onClick={handleLogout}>
+            Logout
+          </Button>
         </Toolbar>
       </AppBar>
 
@@ -64,131 +139,62 @@ const patient = () => {
         Recorded Data
       </Typography>
 
+      {/* Date Filter Input */}
+      <TextField
+        label="Filter by Date (e.g., September 10, 2024)"
+        variant="outlined"
+        fullWidth
+        value={filterDate}
+        onChange={(e) => setFilterDate(e.target.value)}
+        sx={{ marginBottom: 3 }}
+      />
+
       <Grid container spacing={3}>
-        {data.map(({ name, value, lowerBound, upperBound }) => (
-          <Grid item xs={12} sm={6} key={name}>
-            <Paper elevation={3} sx={{ padding: 2 }}>
-              <Typography variant="h5">
-                {name}: {value}
-              </Typography>
-              {!(lowerBound === 0 && upperBound === 0) && (
-                <>
-                  <Typography variant="body1">
-                    Expected: {lowerBound} - {upperBound}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color={
-                      value >= lowerBound && value <= upperBound
-                        ? "green"
-                        : "red"
-                    }
-                  >
-                    {value >= lowerBound && value <= upperBound
-                      ? "Within Expected Range"
-                      : "Below Expected Range"}
-                  </Typography>
-                </>
-              )}
-            </Paper>
+        {filteredData.map((dayData, index) => (
+          <Grid item xs={12} key={index}>
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="h6">
+                  {dayData.date} - {dayData.prediction}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Grid container spacing={2}>
+                  {dayData.parameters.map((param, paramIndex) => (
+                    <Grid item xs={6} key={paramIndex}>
+                      <Paper elevation={3} sx={{ padding: 2 }}>
+                        <Typography variant="h6">{param.name}</Typography>
+                        <Typography>{param.value}</Typography>
+                        {/* Skip range check for "Baseline Fetal Heart Rate" */}
+                        {param.name !== "Baseline Fetal Heart Rate" &&
+                          param.lowerBound > 0 &&
+                          param.upperBound > 0 && (
+                            <Typography
+                              variant="body2"
+                              color={
+                                param.value >= param.lowerBound &&
+                                param.value <= param.upperBound
+                                  ? "green"
+                                  : "red"
+                              }
+                            >
+                              {param.value >= param.lowerBound &&
+                              param.value <= param.upperBound
+                                ? "Within Expected Range"
+                                : "Out of Expected Range"}
+                            </Typography>
+                          )}
+                      </Paper>
+                    </Grid>
+                  ))}
+                </Grid>
+              </AccordionDetails>
+            </Accordion>
           </Grid>
         ))}
       </Grid>
-
-      {/* <Grid container spacing={3}>
-        <Grid item xs={12} sm={6}>
-          <Paper elevation={3} sx={{ padding: 2 }}>
-            <Typography variant="h5">
-              Fetal Movement: {recordedData.fetalMovement}
-            </Typography>
-            <Typography variant="body1">
-              Expected: {recordedData.expectedData.fetalMovement}
-            </Typography>
-            <Typography
-              variant="body2"
-              color={comparisonResults.fetalMovement ? "green" : "red"}
-            >
-              {comparisonResults.fetalMovement
-                ? "Within Expected Range"
-                : "Below Expected Range"}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Paper elevation={3} sx={{ padding: 2 }}>
-            <Typography variant="h5">
-              Uterine Contraction: {recordedData.uterineContraction}
-            </Typography>
-            <Typography variant="body1">
-              Expected: {recordedData.expectedData.uterineContraction}
-            </Typography>
-            <Typography
-              variant="body2"
-              color={comparisonResults.uterineContraction ? "green" : "red"}
-            >
-              {comparisonResults.uterineContraction
-                ? "Within Expected Range"
-                : "Above Expected Range"}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Paper elevation={3} sx={{ padding: 2 }}>
-            <Typography variant="h5">
-              Baseline Heart Rate: {recordedData.baselineHeartRate}
-            </Typography>
-            <Typography variant="body1">
-              Expected: {recordedData.expectedData.baselineHeartRate}
-            </Typography>
-            <Typography
-              variant="body2"
-              color={comparisonResults.baselineHeartRate ? "green" : "red"}
-            >
-              {comparisonResults.baselineHeartRate
-                ? "Within Expected Range"
-                : "Below Expected Range"}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <Paper elevation={3} sx={{ padding: 2 }}>
-            <Typography variant="h5">
-              Abnormality Percentage: {recordedData.abnormalityPercentage}%
-            </Typography>
-            <Typography variant="body1">
-              Expected: {recordedData.expectedData.abnormalityPercentage}%
-            </Typography>
-            <Typography
-              variant="body2"
-              color={comparisonResults.abnormalityPercentage ? "green" : "red"}
-            >
-              {comparisonResults.abnormalityPercentage
-                ? "Within Expected Range"
-                : "Above Expected Range"}
-            </Typography>
-          </Paper>
-        </Grid>
-        <Grid item xs={12}>
-          <Paper elevation={3} sx={{ padding: 2 }}>
-            <Typography variant="h5">
-              Average Fetal Value: {recordedData.averageFetalValue}
-            </Typography>
-            <Typography variant="body1">
-              Expected: {recordedData.expectedData.averageFetalValue}
-            </Typography>
-            <Typography
-              variant="body2"
-              color={comparisonResults.averageFetalValue ? "green" : "red"}
-            >
-              {comparisonResults.averageFetalValue
-                ? "Within Expected Range"
-                : "Below Expected Range"}
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid> */}
     </Container>
   );
 };
 
-export default patient;
+export default Patient;
